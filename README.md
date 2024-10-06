@@ -29,6 +29,7 @@ pip3 install split-folders
 pip3 install tensorflow[and-cuda]
 pip3 install opencv-python
 pip3 install matplotlib
+pip3 install pandas
 ```
 
 If you import a preprocessed dataset, you should put it in dataset/preprocessed/asl_alphabet/...

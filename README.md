@@ -36,7 +36,9 @@ If you import a preprocessed dataset, you should put it in dataset/preprocessed/
 For example, 
 
 dataset/preprocessed/asl_alphabet/train/A/A1.jpg
+
 dataset/preprocessed/asl_alphabet/test/A/A1.jpg
+
 dataset/preprocessed/asl_alphabet/val/A/A1.jpg
 
 ## For training

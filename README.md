@@ -22,5 +22,7 @@ To run setting up data, run the following commands
 pip3 install numpy
 pip3 install split-folders
 pip3 install tensorflow[and-cuda]
+pip3 install opencv-python
+pip3 install matplotlib
 ```
 

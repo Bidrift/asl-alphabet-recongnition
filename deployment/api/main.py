@@ -7,7 +7,10 @@ from pathlib import Path
 import torch.nn as nn
 import torch.optim as optim
 
+
 NUM_CLASSES = 29
+LABELS = [chr(i) for i in range(65, 91)] + ["SPACE", "DELETE", "NOTHING"]
+
 class ConvNet(nn.Module):
     def __init__(self, num_classes=29):
         super(ConvNet, self).__init__()
@@ -79,5 +82,6 @@ async def predict(image_request: ImageRequest):
     with torch.no_grad():
         output = model(image_tensor)
         prediction = torch.argmax(output, dim=1).item()
+        prediction_label = LABELS[prediction]
 
-    return {"prediction": prediction}
+    return {"prediction": prediction_label}

@@ -20,14 +20,14 @@ elif option == "Take a picture":
 
 if image_file is not None:
     # Load the image
-    image = Image.open(image_file).convert("L")  # Convert to grayscale
+    image = Image.open(image_file).convert('L')  # Convert to grayscale
     image = image.resize((32, 32))  # Resize to model input size
 
     # Display the image
     st.image(image, caption="Uploaded Image", use_column_width=True)
 
     # Convert image to 1D list
-    image_data = np.array(image).flatten().tolist()
+    image_data = np.array(image).flatten().tolist() 
 
     # Create request payload
     payload = {"image": image_data}

@@ -7,7 +7,6 @@ from pathlib import Path
 import torch.nn as nn
 import torch.optim as optim
 
-
 NUM_CLASSES = 29
 LABELS = [chr(i) for i in range(65, 91)] + ["SPACE", "DELETE", "NOTHING"]
 
@@ -50,38 +49,44 @@ class ConvNet(nn.Module):
         x = self.fc2(x)
         
         return x
-    
+
+
 # Initialize FastAPI app
 app = FastAPI()
 
+# Path to the model file
 project_dir = Path(__file__).resolve().parent.parent
 model_path = project_dir / "model" / "asl_model.pth"
 
-print(model_path)
-# model_path = "/app/models/asl.model.pth"
 if not model_path.is_file():
     raise FileNotFoundError(f"Model file not found at: {model_path}")
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = ConvNet(num_classes=NUM_CLASSES).to(device)
+model.load_state_dict(torch.load(model_path, map_location=device))
+model.eval()
 
-model = ConvNet(num_classes=NUM_CLASSES)
-model.load_state_dict(torch.load(model_path))
 
-model.eval()  # Set the model to evaluation mode
-
-# Request body structure
 class ImageRequest(BaseModel):
-    image: List[float]  # The flattened 28x28 image data
+    image: List[float]  # Flattened 32x32 image data
+
 
 @app.post("/predict")
 async def predict(image_request: ImageRequest):
-    # Reshape the image data to match the model input (1, 32, 32)
-    image = np.array(image_request.image).reshape(1, 1, 32, 32)
-    image_tensor = torch.tensor(image, dtype=torch.float32)
+    try:
+        # Reshape and normalize the image data
+        image = np.array(image_request.image).reshape(1, 1, 32, 32).astype(np.float32)
+        image_tensor = torch.tensor(image, dtype=torch.float32).to(device)
 
-    # Perform inference
-    with torch.no_grad():
-        output = model(image_tensor)
-        prediction = torch.argmax(output, dim=1).item()
-        prediction_label = LABELS[prediction]
+        print(f"Received image tensor shape: {image_tensor.shape}")
+        print(f"Image tensor min: {image_tensor.min()}, max: {image_tensor.max()}")
 
-    return {"prediction": prediction_label}
+        # Perform inference
+        with torch.no_grad():
+            output = model(image_tensor)
+            prediction = torch.argmax(output, dim=1).item()
+            prediction_label = LABELS[prediction]
+
+        return {"prediction": prediction_label}
+    except Exception as e:
+        return {"error": str(e)}

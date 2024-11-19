@@ -8,14 +8,12 @@ API_URL = "http://localhost:8000/predict"
 st.title("ASL Prediction App")
 st.write("Upload an image or take a picture to classify it.")
 
-# Provide the user with options for image input
 option = st.selectbox("Choose input method:", ("Upload an image", "Take a picture"))
 
-# Handle the selected input method
 if option == "Upload an image":
     image_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 elif option == "Take a picture":
-    image_file = st.camera_input("Take a picture")  # Enables webcam input
+    image_file = st.camera_input("Take a picture")
 
 if image_file is not None:
     try:
